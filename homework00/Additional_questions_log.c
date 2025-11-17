@@ -9,19 +9,20 @@
 #define MIN_VALUE 1
 
 // 日志级别定义
-typedef enum {
+typedef enum
+{
     LOG_INFO,
     LOG_WARNING,
     LOG_ERROR
 } LogLevel;
 
 // 日志函数声明
-void logMessage(LogLevel level, const char* format, ...);
+void logMessage(LogLevel level, const char *format, ...);
 void initLogFile(void);
 void closeLogFile(void);
 
 // 全局日志文件指针
-static FILE* logFile = NULL;
+static FILE *logFile = NULL;
 
 // 函数声明
 void fillArray(int arr[], int size);
@@ -33,11 +34,15 @@ void queryArray(int arr[], int size, int isSorted);
 void findNearestValues(int arr[], int size, int target, int *lessThan, int *greaterThan);
 
 // 日志函数实现
-void initLogFile(void) {
+void initLogFile(void)
+{
     logFile = fopen("array_program.log", "a");
-    if(logFile == NULL) {
+    if (logFile == NULL)
+    {
         printf("Warning: Could not open log file for writing.\n");
-    } else {
+    }
+    else
+    {
         time_t now;
         time(&now);
         fprintf(logFile, "\n========== Program Started at %s ==========\n", ctime(&now));
@@ -45,8 +50,10 @@ void initLogFile(void) {
     }
 }
 
-void closeLogFile(void) {
-    if(logFile != NULL) {
+void closeLogFile(void)
+{
+    if (logFile != NULL)
+    {
         time_t now;
         time(&now);
         fprintf(logFile, "========== Program Ended at %s ==========\n\n", ctime(&now));
@@ -55,157 +62,181 @@ void closeLogFile(void) {
     }
 }
 
-void logMessage(LogLevel level, const char* format, ...) {
+void logMessage(LogLevel level, const char *format, ...)
+{
     va_list args;
     va_start(args, format);
-    
+
     // 获取当前时间
     time_t now;
     time(&now);
-    struct tm* timeInfo = localtime(&now);
+    struct tm *timeInfo = localtime(&now);
     char timeStr[20];
     strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", timeInfo);
-    
+
     // 确定日志级别字符串
-    const char* levelStr;
-    switch(level) {
-        case LOG_INFO:    levelStr = "INFO"; break;
-        case LOG_WARNING: levelStr = "WARN"; break;
-        case LOG_ERROR:   levelStr = "ERROR"; break;
-        default:          levelStr = "UNKNOWN"; break;
+    const char *levelStr;
+    switch (level)
+    {
+    case LOG_INFO:
+        levelStr = "INFO";
+        break;
+    case LOG_WARNING:
+        levelStr = "WARN";
+        break;
+    case LOG_ERROR:
+        levelStr = "ERROR";
+        break;
+    default:
+        levelStr = "UNKNOWN";
+        break;
     }
-    
+
     // 输出到控制台
     printf("[%s] %s: ", timeStr, levelStr);
     vprintf(format, args);
     printf("\n");
-    
+
     // 输出到日志文件
-    if(logFile != NULL) {
+    if (logFile != NULL)
+    {
         fprintf(logFile, "[%s] %s: ", timeStr, levelStr);
         vfprintf(logFile, format, args);
         fprintf(logFile, "\n");
         fflush(logFile);
     }
-    
+
     va_end(args);
 }
 
-int main() {
+int main()
+{
     int arr[ARRAY_SIZE];
-    int isSorted = 0;  // 标记数组是否已排序
+    int isSorted = 0; // 标记数组是否已排序
     char choice;
-    
-    srand(time(NULL));  // 初始化随机数生成器
-    
+
+    srand(time(NULL)); // 初始化随机数生成器
+
     // 初始化日志系统
     initLogFile();
-    logMessage(LOG_INFO, "Program started");
-    
-    printf("Menu-driven Array Program\n");
+    logMessage(LOG_INFO, "程序已启动");
+
+    printf("菜单驱动的数组程序\n");
     printf("=========================\n\n");
-    logMessage(LOG_INFO, "Menu-driven Array Program initialized");
-    
-    do {
+    logMessage(LOG_INFO, "菜单驱动的数组程序已初始化");
+
+    do
+    {
         // 显示菜单
-        printf("\nMENU\n");
-        printf("Select one of the following options:\n");
-        printf("F. Fill array with a random number series\n");
-        printf("P. Print the array\n");
-        printf("S. Sort the array\n");
-        printf("Q. Query the array\n");
-        printf("Z. Terminate the program\n");
-        printf("\nEnter your choice: ");
-        
+        printf("\n菜单\n");
+        printf("请选择以下选项：\n");
+        printf("F. 用随机数填充数组\n");
+        printf("P. 打印数组\n");
+        printf("S. 排序数组\n");
+        printf("Q. 查询数组\n");
+        printf("Z. 退出程序\n");
+        printf("\n请输入选择（字母）：");
+
         scanf(" %c", &choice);
         choice = toupper(choice);
-        
-        logMessage(LOG_INFO, "User selected option: %c", choice);
-        
-        switch(choice) {
-            case 'F':
-                fillArray(arr, ARRAY_SIZE);
-                isSorted = 0;  // 填充后数组变为未排序状态
-                printf("Array filled with random numbers.\n");
-                logMessage(LOG_INFO, "Array filled with %d random numbers", ARRAY_SIZE);
-                break;
-                
-            case 'P':
-                logMessage(LOG_INFO, "Printing array contents");
-                printArray(arr, ARRAY_SIZE);
-                break;
-                
-            case 'S':
-                logMessage(LOG_INFO, "Sorting array using bubble sort");
-                bubbleSort(arr, ARRAY_SIZE);
-                isSorted = 1;  // 标记为已排序
-                printf("Array sorted successfully.\n");
-                logMessage(LOG_INFO, "Array sorted successfully");
-                break;
-                
-            case 'Q':
-                logMessage(LOG_INFO, "Querying array");
-                queryArray(arr, ARRAY_SIZE, isSorted);
-                break;
-                
-            case 'Z':
-                printf("Program terminated.\n");
-                logMessage(LOG_INFO, "Program terminated by user");
-                break;
-                
-            default:
-                printf("Invalid choice. Please try again.\n");
-                logMessage(LOG_WARNING, "Invalid menu choice: %c", choice);
+
+        logMessage(LOG_INFO, "用户选择了选项: %c", choice);
+
+        switch (choice)
+        {
+        case 'F':
+            fillArray(arr, ARRAY_SIZE);
+            isSorted = 0; // 填充后数组变为未排序状态
+            printf("数组已用随机数填充。\n");
+            logMessage(LOG_INFO, "使用 %d 个随机数填充数组", ARRAY_SIZE);
+            break;
+
+        case 'P':
+            logMessage(LOG_INFO, "打印数组内容");
+            printArray(arr, ARRAY_SIZE);
+            break;
+
+        case 'S':
+            logMessage(LOG_INFO, "使用冒泡排序对数组进行排序");
+            bubbleSort(arr, ARRAY_SIZE);
+            isSorted = 1; // 标记为已排序
+            printf("数组已排序。\n");
+            logMessage(LOG_INFO, "数组已排序成功");
+            break;
+
+        case 'Q':
+            logMessage(LOG_INFO, "查询数组");
+            queryArray(arr, ARRAY_SIZE, isSorted);
+            break;
+
+        case 'Z':
+            printf("程序已退出。\n");
+            logMessage(LOG_INFO, "用户终止了程序");
+            break;
+
+        default:
+            printf("无效选择，请重试。\n");
+            logMessage(LOG_WARNING, "无效的菜单选择: %c", choice);
         }
-        
-    } while(choice != 'Z');
-    
+
+    } while (choice != 'Z');
+
     // 关闭日志系统
     closeLogFile();
     return 0;
 }
 
 // 用随机数填充数组
-void fillArray(int arr[], int size) {
-    logMessage(LOG_INFO, "Starting to fill array with %d random numbers", size);
-    for(int i = 0; i < size; i++) {
+void fillArray(int arr[], int size)
+{
+    logMessage(LOG_INFO, "开始用 %d 个随机数填充数组", size);
+    for (int i = 0; i < size; i++)
+    {
         arr[i] = MIN_VALUE + rand() % (MAX_VALUE - MIN_VALUE + 1);
-        logMessage(LOG_INFO, "Array[%d] = %d", i, arr[i]);
+        logMessage(LOG_INFO, "数组[%d] = %d", i, arr[i]);
     }
-    logMessage(LOG_INFO, "Array filling completed");
+    logMessage(LOG_INFO, "数组填充完成");
 }
 
 // 打印数组
-void printArray(int arr[], int size) {
-    if(size == 0) {
-        printf("Array is empty.\n");
-        logMessage(LOG_WARNING, "Attempted to print empty array");
+void printArray(int arr[], int size)
+{
+    if (size == 0)
+    {
+        printf("数组为空。\n");
+        logMessage(LOG_WARNING, "尝试打印空数组");
         return;
     }
-    
-    logMessage(LOG_INFO, "Printing array of size %d", size);
-    printf("Array contents:\n");
-    for(int i = 0; i < size; i++) {
+
+    logMessage(LOG_INFO, "打印数组，大小：%d", size);
+    printf("数组内容：\n");
+    for (int i = 0; i < size; i++)
+    {
         printf("%4d ", arr[i]);
-        if((i + 1) % 10 == 0) {  // 每10个元素换行
+        if ((i + 1) % 10 == 0)
+        { // 每10个元素换行
             printf("\n");
         }
     }
     printf("\n");
-    logMessage(LOG_INFO, "Array printing completed");
+    logMessage(LOG_INFO, "数组打印完成");
 }
 
 // 冒泡排序
-void bubbleSort(int arr[], int size) {
-    logMessage(LOG_INFO, "Starting bubble sort on array of size %d", size);
+void bubbleSort(int arr[], int size)
+{
+    logMessage(LOG_INFO, "开始对大小为 %d 的数组进行冒泡排序", size);
     int comparisons = 0;
     int swaps = 0;
-    
-    for(int i = 0; i < size - 1; i++) {
+
+    for (int i = 0; i < size - 1; i++)
+    {
         int swapped = 0;
-        for(int j = 0; j < size - i - 1; j++) {
+        for (int j = 0; j < size - i - 1; j++)
+        {
             comparisons++;
-            if(arr[j] > arr[j + 1]) {
+            if (arr[j] > arr[j + 1])
+            {
                 // 交换元素
                 int temp = arr[j];
                 arr[j] = arr[j + 1];
@@ -214,155 +245,184 @@ void bubbleSort(int arr[], int size) {
                 swapped = 1;
             }
         }
-        if(!swapped) {
-            logMessage(LOG_INFO, "Array already sorted, breaking at pass %d", i);
+        if (!swapped)
+        {
+            logMessage(LOG_INFO, "数组已排序，在第 %d 趟提前结束", i);
             break;
         }
     }
-    
-    logMessage(LOG_INFO, "Bubble sort completed: %d comparisons, %d swaps", comparisons, swaps);
+
+    logMessage(LOG_INFO, "冒泡排序完成：%d 次比较，%d 次交换", comparisons, swaps);
 }
 
 // 顺序查找
-int sequentialSearch(int arr[], int size, int target, int *foundIndex) {
-    logMessage(LOG_INFO, "Starting sequential search for target %d in array of size %d", target, size);
-    
-    for(int i = 0; i < size; i++) {
-        if(arr[i] == target) {
+int sequentialSearch(int arr[], int size, int target, int *foundIndex)
+{
+    logMessage(LOG_INFO, "开始在大小为 %d 的数组中进行顺序查找，目标：%d", size, target);
+
+    for (int i = 0; i < size; i++)
+    {
+        if (arr[i] == target)
+        {
             *foundIndex = i;
-            logMessage(LOG_INFO, "Target %d found at index %d using sequential search", target, i);
-            return 1;  // 找到
+            logMessage(LOG_INFO, "使用顺序查找找到目标 %d，索引 %d", target, i);
+            return 1; // 找到
         }
     }
-    
-    logMessage(LOG_INFO, "Target %d not found using sequential search", target);
-    return 0;  // 未找到
+
+    logMessage(LOG_INFO, "顺序查找未找到目标 %d", target);
+    return 0; // 未找到
 }
 
 // 二分查找
-int binarySearch(int arr[], int size, int target, int *foundIndex) {
-    logMessage(LOG_INFO, "Starting binary search for target %d in array of size %d", target, size);
-    
+int binarySearch(int arr[], int size, int target, int *foundIndex)
+{
+    logMessage(LOG_INFO, "开始在大小为 %d 的数组中进行二分查找，目标：%d", size, target);
+
     int left = 0;
     int right = size - 1;
     int steps = 0;
-    
-    while(left <= right) {
+
+    while (left <= right)
+    {
         steps++;
         int mid = left + (right - left) / 2;
-        logMessage(LOG_INFO, "Binary search step %d: left=%d, right=%d, mid=%d, arr[mid]=%d",
+        logMessage(LOG_INFO, "二分查找 步骤 %d: left=%d, right=%d, mid=%d, arr[mid]=%d",
                    steps, left, right, mid, arr[mid]);
-        
-        if(arr[mid] == target) {
+
+        if (arr[mid] == target)
+        {
             *foundIndex = mid;
-            logMessage(LOG_INFO, "Target %d found at index %d using binary search (completed in %d steps)",
+            logMessage(LOG_INFO, "使用二分查找找到目标 %d，索引 %d（共 %d 步）",
                        target, mid, steps);
-            return 1;  // 找到
+            return 1; // 找到
         }
-        else if(arr[mid] < target) {
+        else if (arr[mid] < target)
+        {
             left = mid + 1;
         }
-        else {
+        else
+        {
             right = mid - 1;
         }
     }
-    
-    logMessage(LOG_INFO, "Target %d not found using binary search (completed in %d steps)", target, steps);
-    return 0;  // 未找到
+
+    logMessage(LOG_INFO, "二分查找未找到目标 %d（共 %d 步）", target, steps);
+    return 0; // 未找到
 }
 
 // 查找最接近的值
-void findNearestValues(int arr[], int size, int target, int *lessThan, int *greaterThan) {
-    logMessage(LOG_INFO, "Finding nearest values to target %d", target);
-    
+void findNearestValues(int arr[], int size, int target, int *lessThan, int *greaterThan)
+{
+    logMessage(LOG_INFO, "查找与目标 %d 最近的值", target);
+
     *lessThan = -1;
     *greaterThan = -1;
-    
-    for(int i = 0; i < size; i++) {
-        if(arr[i] < target) {
-            if(*lessThan == -1 || arr[i] > *lessThan) {
+
+    for (int i = 0; i < size; i++)
+    {
+        if (arr[i] < target)
+        {
+            if (*lessThan == -1 || arr[i] > *lessThan)
+            {
                 *lessThan = arr[i];
             }
         }
-        else if(arr[i] > target) {
-            if(*greaterThan == -1 || arr[i] < *greaterThan) {
+        else if (arr[i] > target)
+        {
+            if (*greaterThan == -1 || arr[i] < *greaterThan)
+            {
                 *greaterThan = arr[i];
             }
         }
     }
-    
-    logMessage(LOG_INFO, "Nearest values to %d: lessThan=%d, greaterThan=%d", target, *lessThan, *greaterThan);
+
+    logMessage(LOG_INFO, "目标 %d 的最接近值：lessThan=%d, greaterThan=%d", target, *lessThan, *greaterThan);
 }
 
 // 查询数组
-void queryArray(int arr[], int size, int isSorted) {
-    logMessage(LOG_INFO, "Starting array query (isSorted=%d)", isSorted);
-    
-    if(size == 0) {
-        printf("Array is empty. Please fill the array first.\n");
-        logMessage(LOG_WARNING, "Query attempted on empty array");
+void queryArray(int arr[], int size, int isSorted)
+{
+    logMessage(LOG_INFO, "开始查询数组 (isSorted=%d)", isSorted);
+
+    if (size == 0)
+    {
+        printf("数组为空。请先填充数组。\n");
+        logMessage(LOG_WARNING, "在空数组上尝试查询");
         return;
     }
-    
+
     int target;
-    printf("Enter the number to search for: ");
+    printf("请输入要查找的数字：");
     scanf("%d", &target);
-    logMessage(LOG_INFO, "User entered search target: %d", target);
-    
+    logMessage(LOG_INFO, "用户输入查找目标: %d", target);
+
     int foundIndex;
     int found;
-    
-    if(isSorted) {
-        logMessage(LOG_INFO, "Using binary search for target %d", target);
+
+    if (isSorted)
+    {
+        logMessage(LOG_INFO, "使用二分查找目标 %d", target);
         found = binarySearch(arr, size, target, &foundIndex);
-        printf("Using binary search (array is sorted).\n");
+        printf("使用二分查找（数组已排序）。\n");
     }
-    else {
-        logMessage(LOG_INFO, "Using sequential search for target %d", target);
+    else
+    {
+        logMessage(LOG_INFO, "使用顺序查找目标 %d", target);
         found = sequentialSearch(arr, size, target, &foundIndex);
-        printf("Using sequential search (array is not sorted).\n");
+        printf("使用顺序查找（数组未排序）。\n");
     }
-    
-    if(found) {
-        printf("Number %d was located at index %d.\n", target, foundIndex);
-        logMessage(LOG_INFO, "Search successful: %d found at index %d", target, foundIndex);
+
+    if (found)
+    {
+        printf("数字 %d 位于索引 %d。\n", target, foundIndex);
+        logMessage(LOG_INFO, "查找成功：%d 位于索引 %d", target, foundIndex);
     }
-    else {
-        printf("Number %d was not found in the list.\n", target);
-        logMessage(LOG_INFO, "Search failed: %d not found in array", target);
-        
+    else
+    {
+        printf("未在数组中找到数字 %d。\n", target);
+        logMessage(LOG_INFO, "查找失败：数组中未找到 %d", target);
+
         // 查找最接近的值
         int lessThan, greaterThan;
         findNearestValues(arr, size, target, &lessThan, &greaterThan);
-        
-        if(lessThan != -1) {
+
+        if (lessThan != -1)
+        {
             // 查找小于目标值的最大值的索引
-            for(int i = 0; i < size; i++) {
-                if(arr[i] == lessThan) {
-                    printf("Largest number less than %d: %d at index %d\n", target, lessThan, i);
-                    logMessage(LOG_INFO, "Largest number less than %d: %d at index %d", target, lessThan, i);
+            for (int i = 0; i < size; i++)
+            {
+                if (arr[i] == lessThan)
+                {
+                    printf("小于 %d 的最大数：%d，索引 %d\n", target, lessThan, i);
+                    logMessage(LOG_INFO, "小于 %d 的最大数：%d，索引 %d", target, lessThan, i);
                     break;
                 }
             }
         }
-        else {
-            printf("No number less than %d found.\n", target);
-            logMessage(LOG_INFO, "No number less than %d found", target);
+        else
+        {
+            printf("未找到小于 %d 的数。\n", target);
+            logMessage(LOG_INFO, "未找到小于 %d 的数", target);
         }
-        
-        if(greaterThan != -1) {
+
+        if (greaterThan != -1)
+        {
             // 查找大于目标值的最小值的索引
-            for(int i = 0; i < size; i++) {
-                if(arr[i] == greaterThan) {
-                    printf("Smallest number greater than %d: %d at index %d\n", target, greaterThan, i);
-                    logMessage(LOG_INFO, "Smallest number greater than %d: %d at index %d", target, greaterThan, i);
+            for (int i = 0; i < size; i++)
+            {
+                if (arr[i] == greaterThan)
+                {
+                    printf("大于 %d 的最小数：%d，索引 %d\n", target, greaterThan, i);
+                    logMessage(LOG_INFO, "大于 %d 的最小数：%d，索引 %d", target, greaterThan, i);
                     break;
                 }
             }
         }
-        else {
-            printf("No number greater than %d found.\n", target);
-            logMessage(LOG_INFO, "No number greater than %d found", target);
+        else
+        {
+            printf("未找到大于 %d 的数。\n", target);
+            logMessage(LOG_INFO, "未找到大于 %d 的数", target);
         }
     }
 }

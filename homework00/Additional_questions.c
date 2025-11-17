@@ -24,20 +24,20 @@ int main()
 
     srand(time(NULL)); // 初始化随机数生成器
 
-    printf("Menu-driven Array Program\n");
+    printf("菜单驱动的数组程序\n");
     printf("=========================\n\n");
 
     do
     {
         // 显示菜单
-        printf("\nMENU\n");
-        printf("Select one of the following options:\n");
-        printf("F. Fill array with a random number series\n");
-        printf("P. Print the array\n");
-        printf("S. Sort the array\n");
-        printf("Q. Query the array\n");
-        printf("Z. Terminate the program\n");
-        printf("\nEnter your choice: ");
+        printf("\n菜单\n");
+        printf("请选择以下选项：\n");
+        printf("F. 用随机数填充数组\n");
+        printf("P. 打印数组\n");
+        printf("S. 排序数组\n");
+        printf("Q. 查询数组\n");
+        printf("Z. 退出程序\n");
+        printf("\n请输入选择（字母）：");
 
         scanf(" %c", &choice);
         choice = toupper(choice);
@@ -47,7 +47,7 @@ int main()
         case 'F':
             fillArray(arr, ARRAY_SIZE);
             isSorted = 0; // 填充后数组变为未排序状态
-            printf("Array filled with random numbers.\n");
+            printf("数组已用随机数填充。\n");
             break;
 
         case 'P':
@@ -57,7 +57,7 @@ int main()
         case 'S':
             bubbleSort(arr, ARRAY_SIZE);
             isSorted = 1; // 标记为已排序
-            printf("Array sorted successfully.\n");
+            printf("数组已排序。\n");
             break;
 
         case 'Q':
@@ -65,11 +65,11 @@ int main()
             break;
 
         case 'Z':
-            printf("Program terminated.\n");
+            printf("程序已退出。\n");
             break;
 
         default:
-            printf("Invalid choice. Please try again.\n");
+            printf("无效选择，请重试。\n");
         }
 
     } while (choice != 'Z');
@@ -91,11 +91,11 @@ void printArray(int arr[], int size)
 {
     if (size == 0)
     {
-        printf("Array is empty.\n");
+        printf("数组为空。\n");
         return;
     }
 
-    printf("Array contents:\n");
+    printf("数组内容：\n");
     for (int i = 0; i < size; i++)
     {
         printf("%4d ", arr[i]);
@@ -197,12 +197,12 @@ void queryArray(int arr[], int size, int isSorted)
 {
     if (size == 0)
     {
-        printf("Array is empty. Please fill the array first.\n");
+        printf("数组为空。请先填充数组。\n");
         return;
     }
 
     int target;
-    printf("Enter the number to search for: ");
+    printf("请输入要查找的数字：");
     scanf("%d", &target);
 
     int foundIndex;
@@ -211,21 +211,21 @@ void queryArray(int arr[], int size, int isSorted)
     if (isSorted)
     {
         found = binarySearch(arr, size, target, &foundIndex);
-        printf("Using binary search (array is sorted).\n");
+        printf("使用二分查找（数组已排序）。\n");
     }
     else
     {
         found = sequentialSearch(arr, size, target, &foundIndex);
-        printf("Using sequential search (array is not sorted).\n");
+        printf("使用顺序查找（数组未排序）。\n");
     }
 
     if (found)
     {
-        printf("Number %d was located at index %d.\n", target, foundIndex);
+        printf("数字 %d 位于索引 %d。\n", target, foundIndex);
     }
     else
     {
-        printf("Number %d was not found in the list.\n", target);
+        printf("未在数组中找到数字 %d。\n", target);
 
         // 查找最接近的值
         int lessThan, greaterThan;
@@ -238,14 +238,14 @@ void queryArray(int arr[], int size, int isSorted)
             {
                 if (arr[i] == lessThan)
                 {
-                    printf("Largest number less than %d: %d at index %d\n", target, lessThan, i);
+                    printf("小于 %d 的最大数：%d，索引 %d\n", target, lessThan, i);
                     break;
                 }
             }
         }
         else
         {
-            printf("No number less than %d found.\n", target);
+            printf("未找到小于 %d 的数。\n", target);
         }
 
         if (greaterThan != -1)
@@ -255,14 +255,14 @@ void queryArray(int arr[], int size, int isSorted)
             {
                 if (arr[i] == greaterThan)
                 {
-                    printf("Smallest number greater than %d: %d at index %d\n", target, greaterThan, i);
+                    printf("大于 %d 的最小数：%d，索引 %d\n", target, greaterThan, i);
                     break;
                 }
             }
         }
         else
         {
-            printf("No number greater than %d found.\n", target);
+            printf("未找到大于 %d 的数。\n", target);
         }
     }
 }
