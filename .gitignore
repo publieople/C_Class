@@ -420,3 +420,6 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Archive files
+*.7z
