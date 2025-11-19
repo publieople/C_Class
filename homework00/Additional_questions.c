@@ -139,7 +139,7 @@ int sequentialSearch(int arr[], int size, int target, int *foundIndex)
     return 0; // 未找到
 }
 
-// 二分查找
+// 二分查找 - 找到所有匹配的项
 int binarySearch(int arr[], int size, int target, int *foundIndex)
 {
     int left = 0;
@@ -151,8 +151,22 @@ int binarySearch(int arr[], int size, int target, int *foundIndex)
 
         if (arr[mid] == target)
         {
-            *foundIndex = mid;
-            return 1; // 找到
+            // 找到第一个匹配项
+            int first = mid;
+            while (first > 0 && arr[first - 1] == target)
+            {
+                first--;
+            }
+            
+            // 找到最后一个匹配项
+            int last = mid;
+            while (last < size - 1 && arr[last + 1] == target)
+            {
+                last++;
+            }
+            
+            *foundIndex = first; // 返回第一个匹配项的索引
+            return last - first + 1; // 返回匹配项的数量
         }
         else if (arr[mid] < target)
         {
@@ -221,7 +235,18 @@ void queryArray(int arr[], int size, int isSorted)
 
     if (found)
     {
-        printf("数字 %d 位于索引 %d。\n", target, foundIndex);
+        if (found == 1)
+        {
+            printf("数字 %d 位于索引 %d。\n", target, foundIndex);
+        }
+        else
+        {
+            printf("数字 %d 找到 %d 个匹配项，从索引 %d 到 %d：\n", target, found, foundIndex, foundIndex + found - 1);
+            for (int i = foundIndex; i < foundIndex + found; i++)
+            {
+                printf("索引 %d: %d\n", i, arr[i]);
+            }
+        }
     }
     else
     {
