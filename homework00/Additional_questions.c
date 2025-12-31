@@ -15,6 +15,7 @@ int sequentialSearch(int arr[], int size, int target, int *foundIndex);
 int binarySearch(int arr[], int size, int target, int *foundIndex);
 void queryArray(int arr[], int size, int isSorted);
 void findNearestValues(int arr[], int size, int target, int *lessThan, int *greaterThan);
+void performSingleQuery(int arr[], int size, int isSorted, int target);
 
 int main()
 {
@@ -157,15 +158,15 @@ int binarySearch(int arr[], int size, int target, int *foundIndex)
             {
                 first--;
             }
-            
+
             // 找到最后一个匹配项
             int last = mid;
             while (last < size - 1 && arr[last + 1] == target)
             {
                 last++;
             }
-            
-            *foundIndex = first; // 返回第一个匹配项的索引
+
+            *foundIndex = first;     // 返回第一个匹配项的索引
             return last - first + 1; // 返回匹配项的数量
         }
         else if (arr[mid] < target)
@@ -206,21 +207,13 @@ void findNearestValues(int arr[], int size, int target, int *lessThan, int *grea
     }
 }
 
-// 查询数组
-void queryArray(int arr[], int size, int isSorted)
+// 执行单个查询
+void performSingleQuery(int arr[], int size, int isSorted, int target)
 {
-    if (size == 0)
-    {
-        printf("数组为空。请先填充数组。\n");
-        return;
-    }
-
-    int target;
-    printf("请输入要查找的数字：");
-    scanf("%d", &target);
-
     int foundIndex;
     int found;
+
+    printf("\n--- 查询数字: %d ---\n", target);
 
     if (isSorted)
     {
@@ -288,6 +281,54 @@ void queryArray(int arr[], int size, int isSorted)
         else
         {
             printf("未找到大于 %d 的数。\n", target);
+        }
+    }
+}
+
+// 查询数组
+void queryArray(int arr[], int size, int isSorted)
+{
+    if (size == 0)
+    {
+        printf("数组为空。请先填充数组。\n");
+        // 清除输入缓冲区
+        char dummy[256];
+        fgets(dummy, sizeof(dummy), stdin);
+        return;
+    }
+
+    char line[1024];
+    // 读取命令后的剩余行
+    if (fgets(line, sizeof(line), stdin) == NULL)
+    {
+        return;
+    }
+
+    char *ptr = line;
+    int target;
+    int offset;
+    int foundAny = 0;
+
+    // 尝试从行中解析数字
+    while (sscanf(ptr, "%d%n", &target, &offset) == 1)
+    {
+        foundAny = 1;
+        performSingleQuery(arr, size, isSorted, target);
+        ptr += offset;
+    }
+
+    // 如果初始行中没有找到数字，提示用户输入
+    if (!foundAny)
+    {
+        printf("请输入要查找的数字（支持多个，以空格分隔）：");
+        if (fgets(line, sizeof(line), stdin) != NULL)
+        {
+            ptr = line;
+            while (sscanf(ptr, "%d%n", &target, &offset) == 1)
+            {
+                performSingleQuery(arr, size, isSorted, target);
+                ptr += offset;
+            }
         }
     }
 }
